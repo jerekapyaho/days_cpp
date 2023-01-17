@@ -3,6 +3,8 @@
 #include <string>   // for std::string class
 #include <cstdlib>  // for std::getenv
 #include <chrono>   // for the std::chrono facilities
+#include <sstream>  // for std::stringstream class
+#include <vector>   // for std::vector class
 
 int main() {
     // Get the current date from the system clock and extract year_month_day.
@@ -26,7 +28,28 @@ int main() {
         std::string birthdateString = birthdateEnv;  // assignment operator makes a string out of char *
         std::cout << "BIRTHDATE = " << birthdateString << std::endl;  // TODO: remove this
 
-        // TODO: Parse the YYYY-MM-DD string, or bail out if the format is wrong
+        // Parse the YYYY-MM-DD string, or skip this feature if the format is wrong
+        std::istringstream birthdateStringStream(birthdateString);
+        std::string segment;
+        std::vector<std::string> segmentList;
+        while (std::getline(birthdateStringStream, segment, '-')) {
+            segmentList.push_back(segment);
+        }
+        if (segmentList.size() != 3) {  // expecting exactly three components, YYYY MM DD
+            std::cerr << "Value of BIRTHDATE environment variable has invalid format: "
+                << birthdateString << std::endl;
+        }
+        else {
+            std::cout
+                << "birthdate: "
+                << " year = " << segmentList.at(0)
+                << " month = " << segmentList.at(1)
+                << " day = " << segmentList.at(2)
+                << std::endl;
+
+            // TODO: If the birthdate matches the current date, congratulate the user
+        }
+
 
         // TODO: If the birthdate matches the current date, congratulate the user
     }

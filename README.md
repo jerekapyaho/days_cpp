@@ -46,3 +46,14 @@ be able to compile the program using the GNU C++ compiler:
 
 which produces an executable file called `days`. Run the program with `./days` (the `./` prefix is needed
 because you should never have the current directory in your PATH).
+
+## The BIRTHDATE environment variable
+
+If the program environment contains the `BIRTHDATE` variable, and its value is a date in the `YYYY-MM-DD`
+format, this application will use the value to show a birthday greeting to the user.
+
+If you are a Linux user, you should set the `BIRTHDAY` environment variable in your `.bashrc` file
+(or `~/.bash_profile`, or `~/.profile`, or whatever your shell uses).
+
+Windows users need to open the old style Control Panel, then navigate to System Properties, Advanced,
+Environment Variables.
