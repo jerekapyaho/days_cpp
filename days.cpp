@@ -7,56 +7,52 @@
 #include <vector>   // for std::vector class
 #include <optional> // for std::optional
 
-// Returns the value of the `BIRTHDATE` environment variable
-// if it exists as an `std::chrono::year_month_day` wrapped
-// in an `std::optional`, otherwise returns `std::nullopt`.
-std::optional<std::chrono::year_month_day> getBirthdate() {
-    const char *birthdateEnv = std::getenv("BIRTHDATE");
-    if (nullptr != birthdateEnv) {  // the BIRTHDATE environment variable exists
-        std::string birthdateString = birthdateEnv;  // assignment operator makes a string out of char *
+// Parses the string `buf` for a date in YYYY-MM-DD format. If `buf` can be parsed,
+// returns a wrapped `std::chrono::year_month_day` instances, otherwise `std::nullopt`.
+std::optional<std::chrono::year_month_day> getDateFromString(const std::string& buf) {
+    std::istringstream input(buf);
+    std::string segment;
+    std::vector<std::string> segmentList;
+    while (std::getline(input, segment, '-')) {
+        segmentList.push_back(segment);
+    }
+    if (segmentList.size() != 3) {  // expecting three components, year-month-day
+        return std::nullopt;
+    }
 
-        // Parse the YYYY-MM-DD string, or bail out if the format is wrong
-        std::istringstream birthdateStringStream(birthdateString);
-        std::string segment;
-        std::vector<std::string> segmentList;
-        while (std::getline(birthdateStringStream, segment, '-')) {
-            segmentList.push_back(segment);
-        }
-        if (segmentList.size() != 3) {  // expecting three components, year-month-day
-            return std::nullopt;
-        }
+    int year{0};
+    unsigned int month{0};
+    unsigned int day{0};
+    try {
+        year = std::stoul(segmentList.at(0));
+        month = std::stoi(segmentList.at(1));
+        day = std::stoi(segmentList.at(2));
 
-        int birthYear{0};
-        unsigned int birthMonth{0};
-        unsigned int birthDay{0};
-        try {
-            birthYear = std::stoul(segmentList.at(0));
-            birthMonth = std::stoi(segmentList.at(1));
-            birthDay = std::stoi(segmentList.at(2));
-
-            return std::chrono::year_month_day{
-                std::chrono::year{birthYear},
-                std::chrono::month(birthMonth),
-                std::chrono::day(birthDay)};
-        }
-        catch (std::invalid_argument const& ex) {
-            std::cerr << "conversion error: " << ex.what() << std::endl;
-            return std::nullopt;
-        }
-        catch (std::out_of_range const& ex) {
-            std::cerr << "conversion error: " << ex.what() << std::endl;
-            return std::nullopt;
-        }
+        return std::chrono::year_month_day{
+            std::chrono::year{year},
+            std::chrono::month(month),
+            std::chrono::day(day)};
+    }
+    catch (std::invalid_argument const& ex) {
+        std::cerr << "conversion error: " << ex.what() << std::endl;
+        return std::nullopt;
+    }
+    catch (std::out_of_range const& ex) {
+        std::cerr << "conversion error: " << ex.what() << std::endl;
+        return std::nullopt;
     }
 
     return std::nullopt;
 }
 
-std::optional<std::string> getUser() {
-    const char *userEnv = std::getenv("USER");
-    if (nullptr != userEnv) {
-        std::string userString = userEnv;
-        return userString;
+// Returns the value of the environment variable `name` as an `std::optional``
+// value. If the variable exists, the value is a wrapped `std::string`,
+// otherwise `std::nullopt`.
+std::optional<std::string> getEnvironmentVariable(const std::string& name) {
+    const char *value = std::getenv(const_cast<char *>(name.c_str()));
+    if (nullptr != value) {
+        std::string valueString = value;
+        return valueString;
     }
     return std::nullopt;
 }
@@ -67,19 +63,21 @@ int main() {
     const std::chrono::time_point now = std::chrono::system_clock::now();
     const std::chrono::year_month_day currentDate{std::chrono::floor<std::chrono::days>(now)};
 
-    // Compact way of checking the birthdate and user, using functions
-    // that return `std::optional` objects:
-    auto birthdate = getBirthdate();
-    if (birthdate.has_value()) {
-        auto b = birthdate.value();
-        if (b.month() == currentDate.month() && b.day() == currentDate.day()) {
-            std::cout << "Happy birthday";
-            auto userEnv = getUser();
-            if (userEnv.has_value()) {
-                auto user = userEnv.value();
-                std::cout << ", " << user;
+    // Check the birthdate and user with generic helper functions
+    auto birthdateValue = getEnvironmentVariable("BIRTHDATE");
+    if (birthdateValue.has_value()) {
+        auto birthdate = getDateFromString(birthdateValue.value());
+        if (birthdate.has_value()) {
+            auto b = birthdate.value();
+            if (b.month() == currentDate.month() && b.day() == currentDate.day()) {
+                std::cout << "Happy birthday";
+                auto userEnv = getEnvironmentVariable("USER");
+                if (userEnv.has_value()) {
+                    auto user = userEnv.value();
+                    std::cout << ", " << user;
+                }
+                std::cout << "!\n";
             }
-            std::cout << "!\n";
         }
     }
 
