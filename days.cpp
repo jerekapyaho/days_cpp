@@ -6,17 +6,23 @@
 #include <sstream>  // for std::stringstream class
 #include <vector>   // for std::vector class
 #include <optional> // for std::optional
+#include <string_view>  // for std::string_view
 
 // Parses the string `buf` for a date in YYYY-MM-DD format. If `buf` can be parsed,
 // returns a wrapped `std::chrono::year_month_day` instances, otherwise `std::nullopt`.
 std::optional<std::chrono::year_month_day> getDateFromString(const std::string& buf) {
-    std::istringstream input(buf);
-    std::string segment;
-    std::vector<std::string> segmentList;
-    while (std::getline(input, segment, '-')) {
-        segmentList.push_back(segment);
+    constexpr std::string_view yyyymmdd = "YYYY-MM-DD";
+    if (buf.size() != yyyymmdd.size()) {
+        return std::nullopt;
     }
-    if (segmentList.size() != 3) {  // expecting three components, year-month-day
+
+    std::istringstream input(buf);
+    std::string part;
+    std::vector<std::string> parts;
+    while (std::getline(input, part, '-')) {
+        parts.push_back(part);
+    }
+    if (parts.size() != 3) {  // expecting three components, year-month-day
         return std::nullopt;
     }
 
@@ -24,9 +30,9 @@ std::optional<std::chrono::year_month_day> getDateFromString(const std::string& 
     unsigned int month{0};
     unsigned int day{0};
     try {
-        year = std::stoul(segmentList.at(0));
-        month = std::stoi(segmentList.at(1));
-        day = std::stoi(segmentList.at(2));
+        year = std::stoul(parts.at(0));
+        month = std::stoi(parts.at(1));
+        day = std::stoi(parts.at(2));
 
         return std::chrono::year_month_day{
             std::chrono::year{year},
