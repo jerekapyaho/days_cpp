@@ -70,13 +70,15 @@ int main() {
         if (birthdate.has_value()) {
             auto b = birthdate.value();
             if (b.month() == currentDate.month() && b.day() == currentDate.day()) {
-                std::cout << "Happy birthday";
+                std::ostringstream message;
+                message << "Happy birthday";
                 auto userEnv = getEnvironmentVariable("USER");
                 if (userEnv.has_value()) {
                     auto user = userEnv.value();
-                    std::cout << ", " << user;
+                    message << ", " << user;
                 }
-                std::cout << "!\n";
+                message << "!\n";
+                std::cout << message.str();
             }
         }
     }
