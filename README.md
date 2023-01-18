@@ -61,7 +61,7 @@ If the program environment contains the `BIRTHDATE` variable, and its value
 is a date in the `YYYY-MM-DD` format, this application will use the value 
 to show a birthday greeting to the user.
 
-If you are a Linux user, you should set the `BIRTHDAY` environment variable 
+If you are a Linux user, you should set the `BIRTHDATE` environment variable 
 in your `.bashrc` file (or `~/.bash_profile`, or `~/.profile`, or whatever 
 your shell uses).
 
