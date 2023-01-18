@@ -33,3 +33,7 @@ days
 *.exe
 *.out
 *.app
+
+# Development Environment
+.vscode/
+.DS_Store
