@@ -41,11 +41,9 @@ std::optional<std::chrono::year_month_day> getDateFromString(const std::string& 
     }
     catch (std::invalid_argument const& ex) {
         std::cerr << "conversion error: " << ex.what() << std::endl;
-        return std::nullopt;
     }
     catch (std::out_of_range const& ex) {
         std::cerr << "conversion error: " << ex.what() << std::endl;
-        return std::nullopt;
     }
 
     return std::nullopt;
