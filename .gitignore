@@ -40,3 +40,7 @@ days
 
 # VS Code Workspace preferences
 *.code-workspace
+
+.idea
+CMakeLists.txt
+cmake-build-debug

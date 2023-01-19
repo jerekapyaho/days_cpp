@@ -1,5 +1,4 @@
 #include <iostream>
-#include <iomanip>  // for controlling stream output
 #include <string>   // for std::string class
 #include <cstdlib>  // for std::getenv
 #include <chrono>   // for the std::chrono facilities
@@ -43,11 +42,9 @@ std::optional<std::chrono::year_month_day> getDateFromString(const std::string& 
     }
     catch (std::invalid_argument const& ex) {
         std::cerr << "conversion error: " << ex.what() << std::endl;
-        return std::nullopt;
     }
     catch (std::out_of_range const& ex) {
         std::cerr << "conversion error: " << ex.what() << std::endl;
-        return std::nullopt;
     }
 
     return std::nullopt;
@@ -101,9 +98,9 @@ int main() {
         "Finland joined the European Union");
     Event ev3("2010-10-01", "economy", "Something big");
 
-    std::cout << ev1.timestamp << ": " << ev1.description << '\n';
-    std::cout << ev2.timestamp << ": " << ev2.description << '\n';
-    std::cout << ev3.timestamp << ": " << ev3.description << '\n';
+    std::cout << ev1.getTimestamp() << ": " << ev1.getDescription() << '\n';
+    std::cout << ev2.getTimestamp() << ": " << ev2.getDescription() << '\n';
+    std::cout << ev3.getTimestamp() << ": " << ev3.getDescription() << '\n';
 
     return 0;
 }
