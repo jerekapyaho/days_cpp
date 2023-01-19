@@ -1,5 +1,4 @@
 #include <iostream>
-#include <iomanip>  // for controlling stream output
 #include <string>   // for std::string class
 #include <cstdlib>  // for std::getenv
 #include <chrono>   // for the std::chrono facilities
