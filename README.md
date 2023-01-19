@@ -26,7 +26,7 @@ Open "Developer Command Prompt for Microsoft Visual Studio 2022" (or whatever
 version you have, like 2019) from the Start menu, navigate to the directory 
 where you cloned this repository, and use the command
 
-    cl /std:c++20 days.cpp event.cpp
+    cl /std:c++20 /EHsc days.cpp event.cpp
 
 to compile the program. The result is an executable file called `days.exe`, 
 which you can run with the command `days` in the Command Prompt.
@@ -55,6 +55,8 @@ which produces an executable file called `days`. Run the program with
 `./days` (the `./` prefix is needed because you should never have the 
 current directory in your PATH).
 
+Please use at least GCC 11 to enjoy the C++20 features.
+
 ## The BIRTHDATE environment variable
 
 If the program environment contains the `BIRTHDATE` variable, and its value 
@@ -66,4 +68,9 @@ in your `.bashrc` file (or `~/.bash_profile`, or `~/.profile`, or whatever
 your shell uses).
 
 Windows users need to open the old style Control Panel, then navigate to 
-System Properties, Advanced, Environment Variables.
+System Properties, Advanced, Environment Variables. Set a user variable,
+not a system variable.
+
+Note that changes to environment variables will not be picked up by a 
+running shell. After you have defined the environment variable, close the 
+shell window, then open it again.
