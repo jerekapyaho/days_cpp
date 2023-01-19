@@ -1,4 +1,5 @@
 #include <iostream>
+#include <iomanip>  // for output stream control
 #include <string>   // for std::string class
 #include <cstdlib>  // for std::getenv
 #include <chrono>   // for the std::chrono facilities
@@ -64,6 +65,27 @@ std::optional<std::string> getEnvironmentVariable(const std::string& name) {
     return std::nullopt;
 }
 
+// Returns `date` as a string in `YYYY-MM-DD` format.
+// The ostream support for std::chrono::year_month_day is not
+// available in most (any?) compilers, so we roll our own.  
+std::string getStringFromDate(const std::chrono::year_month_day& date) {
+    std::ostringstream result;
+
+    result 
+        << std::setfill('0') << std::setw(4) << static_cast<int>(date.year())
+        << "-" << std::setfill('0') << std::setw(2) << static_cast<unsigned>(date.month())
+        << "-" << std::setfill('0') << std::setw(2) << static_cast<unsigned>(date.day());
+
+    return result.str();
+}
+
+// Helper to print an event to standard output
+void displayEvent(const Event& event) {
+    std::cout 
+        << getStringFromDate(event.getTimestamp()) << ": " 
+        << event.getDescription() << '\n'; 
+}
+
 int main() {
     using namespace std;
 
@@ -93,20 +115,28 @@ int main() {
     }
 
     // Add a few events for testing, then print them out:
-    
-    Event ev1(
-        "1989-11-09", 
-        "history", 
-        "Fall of the Berlin wall");
-    Event ev2(
-        "1995-01-01", 
-        "history", 
-        "Finland joined the European Union");
-    Event ev3("2010-10-01", "economy", "Something big");
 
-    cout << ev1.getTimestamp() << ": " << ev1.getDescription() << '\n';
-    cout << ev2.getTimestamp() << ": " << ev2.getDescription() << '\n';
-    cout << ev3.getTimestamp() << ": " << ev3.getDescription() << '\n';
+    Event ev1(
+        getDateFromString("2020-12-15").value(), 
+        "computing", 
+        "C++20 released");
+    Event ev2(
+        getDateFromString("2023-01-10").value(), 
+        "computing", 
+        "Rust 1.66.1 released");
+    Event ev3(
+        getDateFromString("2022-09-20").value(), 
+        "computing", 
+        "Java SE 19 released");
+    Event ev4(
+        getDateFromString("2014-11-12").value(),
+        "computing",
+        ".NET Core released");
+
+    displayEvent(ev1);
+    displayEvent(ev2);
+    displayEvent(ev3);
+    displayEvent(ev4);
 
     return 0;
 }

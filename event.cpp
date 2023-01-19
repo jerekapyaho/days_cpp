@@ -1,6 +1,6 @@
 #include "event.h"
 
-std::string Event::getTimestamp() const {
+std::chrono::year_month_day Event::getTimestamp() const {
     return timestamp;
 }
 
