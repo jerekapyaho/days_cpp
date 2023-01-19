@@ -26,7 +26,7 @@ Open "Developer Command Prompt for Microsoft Visual Studio 2022" (or whatever
 version you have, like 2019) from the Start menu, navigate to the directory 
 where you cloned this repository, and use the command
 
-    cl /std:c++20 days.cpp
+    cl /std:c++20 days.cpp event.cpp
 
 to compile the program. The result is an executable file called `days.exe`, 
 which you can run with the command `days` in the Command Prompt.
@@ -37,7 +37,7 @@ In macOS you can use either the `clang` compiler installed with Xcode, or
 the GNU C/C++ compiler installed with Homebrew. For example, if you have 
 Xcode installed, you should be able to compile the program with
 
-    clang++ -std=c++20 -o days days.cpp
+    clang++ -std=c++20 -o days days.cpp event.cpp
 
 which produces an executable file called `days`. Run the program with 
 `./days` (the `./` prefix is needed because you should never have the 
@@ -49,7 +49,7 @@ In a standard Linux environment you probably already have development tools
 installed, so you should be able to compile the program using the GNU C++ 
 compiler:
 
-    g++ -std=c++20 -o days days.cpp
+    g++ -std=c++20 -o days days.cpp event.cpp
 
 which produces an executable file called `days`. Run the program with 
 `./days` (the `./` prefix is needed because you should never have the 

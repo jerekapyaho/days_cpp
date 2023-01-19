@@ -8,6 +8,8 @@
 #include <optional> // for std::optional
 #include <string_view>  // for std::string_view
 
+#include "event.h"  // for our Event class
+
 // Parses the string `buf` for a date in YYYY-MM-DD format. If `buf` can be parsed,
 // returns a wrapped `std::chrono::year_month_day` instances, otherwise `std::nullopt`.
 std::optional<std::chrono::year_month_day> getDateFromString(const std::string& buf) {
@@ -89,5 +91,29 @@ int main() {
         }
     }
 
+    Event ev1(
+        "1989-11-09", 
+        "history", 
+        "Fall of the Berlin wall");
+    Event ev2(
+        "1995-01-01", 
+        "history", 
+        "Finland joined the European Union");
+    Event ev3("2010-10-01", "economy", "Something big");
+
+    std::cout << ev1.timestamp << ": " << ev1.description << '\n';
+    std::cout << ev2.timestamp << ": " << ev2.description << '\n';
+    std::cout << ev3.timestamp << ": " << ev3.description << '\n';
+
     return 0;
 }
+
+
+
+
+
+
+
+
+
+
