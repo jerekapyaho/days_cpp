@@ -37,6 +37,10 @@ days
 # Development Environment
 .vscode/
 .DS_Store
+
+# VS Code Workspace preferences
+*.code-workspace
+
 .idea
 CMakeLists.txt
 cmake-build-debug
