@@ -55,7 +55,7 @@ which produces an executable file called `days`. Run the program with
 `./days` (the `./` prefix is needed because you should never have the 
 current directory in your PATH).
 
-Please use at least GCC 11 to enjoy the C++20 features.
+Please use at least GCC 11 to enjoy the C++20 features. Note that you might need to update your distro to a newer version, eg. WSL2 Ubuntu users need to update from 20.04 to 22.04 so they you can use GCC 11. Instructions how to update are [here](https://askubuntu.com/questions/1428423/upgrade-ubuntu-in-wsl2-from-20-04-to-22-04).
 
 ## The BIRTHDATE environment variable
 
