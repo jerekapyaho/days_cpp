@@ -12,6 +12,29 @@ Days can also congratulate the user on their birthday if the current date
 is the same as their birthdate, set as an enviroment variable called 
 `BIRTHDATE`, with the value in YYYY-MM-DD format, for example, `1988-08-16`.
 
+## The event file
+
+The program reads the events to display from a CSV file. Create the `~/.days` directory if it doesn't already exist. Add a file called `events.csv` 
+inside that directory, with contents in the following format:
+
+    2020-12-15,computing,C++20 released
+    2023-01-10,computing,Rust 1.66.1 released
+    2022-09-20,computing,Java SE 19 released
+    2014-11-12,computing,.NET Core released
+
+The format of each line should be `date,category,description` in the CSV (comma-separated value) style. Here `date` is the date in ISO 8601 standard
+format `YYYY-MM-DD`, while `category` and `description` are free text.
+
+Ideally, `category` is a single word like `history`, `personal` or
+`computing`, but there are no predefined categories.
+
+*NOTE*: If your description contains commas, you will need to put it in
+quotation marks, because otherwise the commas would mess up the CSV parsing.
+For example, a line with a description containing commas could be:
+
+    2010-02-14,personal,"Signed, sealed, and delivered"
+
+
 ## Compiling the program
 
 Days is written in C++20, so you will need a C++ compiler that supports 
