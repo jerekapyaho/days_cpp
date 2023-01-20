@@ -203,5 +203,10 @@ int main() {
     // TODO: Read in the CSV file from `eventsPath` using RapidCSV
     // See https://github.com/d99kris/rapidcsv
 
+    if (fs::exists(eventsPath)) {
+        display("NOTE: file already exists");
+        newline();
+    }
+    
     return 0;
 }
