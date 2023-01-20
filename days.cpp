@@ -1,5 +1,5 @@
-#include <iostream>
-#include <iomanip>  // for output stream control
+#include <iostream> // for standard I/O streams 
+#include <iomanip>  // for stream control
 #include <string>   // for std::string class
 #include <cstdlib>  // for std::getenv
 #include <chrono>   // for the std::chrono facilities
@@ -66,7 +66,7 @@ std::optional<std::string> getEnvironmentVariable(const std::string& name) {
 }
 
 // Returns `date` as a string in `YYYY-MM-DD` format.
-// The ostream support for std::chrono::year_month_day is not
+// The ostream support for `std::chrono::year_month_day` is not
 // available in most (any?) compilers, so we roll our own.  
 std::string getStringFromDate(const std::chrono::year_month_day& date) {
     std::ostringstream result;
@@ -79,11 +79,27 @@ std::string getStringFromDate(const std::chrono::year_month_day& date) {
     return result.str();
 }
 
-// Helper to print an event to standard output
-void displayEvent(const Event& event) {
-    std::cout 
+
+// Print `T` to standard output.
+// `T` needs to have an overloaded << operator.
+template <typename T>
+void display(const T& value) {
+    std::cout << value;
+}
+
+// Prints a newline to standard output.
+inline void newline() {
+    std::cout << std::endl;
+}
+
+// Overload the << operator for the Event class.
+// See https://learn.microsoft.com/en-us/cpp/standard-library/overloading-the-output-operator-for-your-own-classes?view=msvc-170
+std::ostream& operator <<(std::ostream& os, const Event& event) {
+    os 
         << getStringFromDate(event.getTimestamp()) << ": " 
-        << event.getDescription() << '\n'; 
+        << event.getDescription() 
+        << " (" + event.getCategory() + ")";
+    return os;
 }
 
 int main() {
@@ -108,8 +124,8 @@ int main() {
                     auto user = userEnv.value();
                     message << ", " << user;
                 }
-                message << "!\n";
-                cout << message.str();
+                message << "!";
+                display(message.str()); newline();
             }
         }
     }
@@ -133,10 +149,16 @@ int main() {
         "computing",
         ".NET Core released");
 
-    displayEvent(ev1);
-    displayEvent(ev2);
-    displayEvent(ev3);
-    displayEvent(ev4);
+    display(ev1); newline();  // echoes of Scheme here...
+    display(ev2); newline();
+    display(ev3); newline();
+    display(ev4); newline();
+
+    // Look! All references to std::cout are gone from main()!
+    // Note that you can't print an `std::chrono::year_month_day`
+    // with `display` because there is no overloaded << operator
+    // for it (yet). If you don't agree to use the ISO 8601 format, 
+    // then the current locale would need to be consulted... it's tricky.
 
     return 0;
 }
