@@ -7,6 +7,7 @@
 #include <vector>   // for std::vector class
 #include <optional> // for std::optional
 #include <string_view>  // for std::string_view
+#include <filesystem>  // for path utilities
 
 #include "event.h"  // for our Event class
 
@@ -158,7 +159,49 @@ int main() {
     // Note that you can't print an `std::chrono::year_month_day`
     // with `display` because there is no overloaded << operator
     // for it (yet). If you don't agree to use the ISO 8601 format, 
-    // then the current locale would need to be consulted... it's tricky.
+    // then the current locale would need to be consulted... it gets tricky.
+
+    newline();
+    display("Preparing to read events from CSV file");
+    newline();
+
+    // Construct a path for the events file.
+    // If the user's home directory can't be determined, give up.
+    auto homeString = getEnvironmentVariable("HOME");
+    if (!homeString.has_value()) {
+        std::cerr << "Unable to determine home directory";
+        return 1;
+    }
+
+    namespace fs = std::filesystem; // save a little typing
+    fs::path daysPath{homeString.value()};  // start with the value of $HOME
+    daysPath /= ".days";                    // append our own directory
+    if (!fs::exists(daysPath)) {
+        display(daysPath.string());
+        display(" does not exist, please create it");
+        newline();
+        return 1;  // nothing to do anymore, exit program
+
+        // To create the directory:
+        //std::filesystem::create_directory(daysPath);
+        // See issue: https://github.com/jerekapyaho/days_cpp/issues/4
+    }
+    else {
+        display(daysPath.string());
+        display(" exists");
+        newline();
+    }
+
+    // Now we should have a valid path to the `~/.days` directory.
+    // Construct a pathname for the `events.csv` file.
+    auto eventsPath = daysPath / "events.csv";
+    
+    display("Path to our events file = ");
+    display(eventsPath.string());
+    newline();
+
+    // TODO: Read in the CSV file from `eventsPath` using RapidCSV
+    // See https://github.com/d99kris/rapidcsv
 
     return 0;
 }
