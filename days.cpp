@@ -167,15 +167,26 @@ int main() {
 
     // Construct a path for the events file.
     // If the user's home directory can't be determined, give up.
+    std::string homeDirectoryString;
     auto homeString = getEnvironmentVariable("HOME");
     if (!homeString.has_value()) {
-        std::cerr << "Unable to determine home directory";
-        return 1;
+        // HOME not found, maybe this is Windows? Try USERPROFILE.
+        auto userProfileString = getEnvironmentVariable("USERPROFILE");
+        if (!userProfileString.has_value()) {
+            std::cerr << "Unable to determine home directory";
+            return 1;
+        }
+        else {
+            homeDirectoryString = userProfileString.value();
+        }
+    }
+    else {
+        homeDirectoryString = homeString.value();
     }
 
     namespace fs = std::filesystem; // save a little typing
-    fs::path daysPath{homeString.value()};  // start with the value of $HOME
-    daysPath /= ".days";                    // append our own directory
+    fs::path daysPath{homeDirectoryString};
+    daysPath /= ".days"; // append our own directory
     if (!fs::exists(daysPath)) {
         display(daysPath.string());
         display(" does not exist, please create it");
