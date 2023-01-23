@@ -17,6 +17,7 @@ is the same as their birthdate, set as an enviroment variable called
 The program reads the events to display from a CSV file. Create the `~/.days` directory if it doesn't already exist. Add a file called `events.csv` 
 inside that directory, with contents in the following format:
 
+    date,category,description
     2020-12-15,computing,C++20 released
     2023-01-10,computing,Rust 1.66.1 released
     2022-09-20,computing,Java SE 19 released
@@ -25,8 +26,11 @@ inside that directory, with contents in the following format:
 The format of each line should be `date,category,description` in the CSV (comma-separated value) style. Here `date` is the date in ISO 8601 standard
 format `YYYY-MM-DD`, while `category` and `description` are free text.
 
-Ideally, `category` is a single word like `history`, `personal` or
-`computing`, but there are no predefined categories.
+Note that the first line in the file is a column header, and should be included
+as such.
+
+Ideally, the value of the `category` column is a single word like `history`, 
+`personal` or `computing`, but there are no predefined categories.
 
 *NOTE*: If your description contains commas, you will need to put it in
 quotation marks, because otherwise the commas would mess up the CSV parsing.
@@ -34,6 +38,9 @@ For example, a line with a description containing commas could be:
 
     2010-02-14,personal,"Signed, sealed, and delivered"
 
+Users can edit this file with a text editor. Later on this program may get
+features that allow you to add or delete events and update this file.
+The program will reject any lines that are not in the correct format.
 
 ## Compiling the program
 
