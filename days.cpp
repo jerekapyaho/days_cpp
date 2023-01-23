@@ -8,8 +8,10 @@
 #include <optional> // for std::optional
 #include <string_view>  // for std::string_view
 #include <filesystem>  // for path utilities
+#include <memory>   // for smart pointers
 
 #include "event.h"  // for our Event class
+#include "rapidcsv.h"  // for the header-only library RapidCSV
 
 // Parses the string `buf` for a date in YYYY-MM-DD format. If `buf` can be parsed,
 // returns a wrapped `std::chrono::year_month_day` instances, otherwise `std::nullopt`.
@@ -167,7 +169,7 @@ int main() {
 
     // Construct a path for the events file.
     // If the user's home directory can't be determined, give up.
-    std::string homeDirectoryString;
+    string homeDirectoryString;
     auto homeString = getEnvironmentVariable("HOME");
     if (!homeString.has_value()) {
         // HOME not found, maybe this is Windows? Try USERPROFILE.
@@ -218,6 +220,55 @@ int main() {
         display("NOTE: file already exists");
         newline();
     }
-    
+
+    rapidcsv::Document document{eventsPath.string()};
+    vector<string> dateStrings{document.GetColumn<string>("date")};
+    vector<string> categoryStrings{document.GetColumn<string>("category")};
+    vector<string> descriptionStrings{document.GetColumn<string>("description")};
+
+    vector<Event> events;
+    for (size_t i{0}; i < dateStrings.size(); i++) {
+        auto date = getDateFromString(dateStrings.at(i));
+        if (!date.has_value()) {
+            cerr << "bad date at row " << i << ": " << dateStrings.at(i) << '\n';
+            continue;
+        }
+
+        Event event{
+            date.value(),
+            categoryStrings.at(i),
+            descriptionStrings.at(i)
+        };
+        events.push_back(event);
+    }
+
+    display("Loaded ");
+    display(events.size());
+    display(" events from file");
+    newline();
+
+    const auto today = chrono::sys_days{
+        floor<chrono::days>(chrono::system_clock::now())};
+
+    for (auto& event : events) {
+        const auto delta = (chrono::sys_days{event.getTimestamp()} - today).count();
+
+        ostringstream line;
+        line << event << " - ";
+
+        if (delta < 0) {
+            line << abs(delta) << " days ago";
+        }
+        else if (delta > 0) {
+            line << "in " << delta << " days";
+        }
+        else {
+            line << "today";
+        }
+
+        display(line.str());
+        newline();
+    }
+
     return 0;
 }
