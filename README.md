@@ -109,4 +109,4 @@ shell window, then open it again.
 
 RapidCSV
 * Copyright (c) 2017, Kristofer Berggren
-* Licensed under the BSD 3-Clause License. See [LICENSE](https://github.com/d99kris/rapidcsv/blob/master/LICENSE]).
+* Licensed under the BSD 3-Clause License. See [LICENSE](https://github.com/d99kris/rapidcsv/blob/master/LICENSE).
