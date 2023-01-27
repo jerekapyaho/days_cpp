@@ -133,40 +133,10 @@ int main() {
         }
     }
 
-    // Add a few events for testing, then print them out:
-
-    Event ev1(
-        getDateFromString("2020-12-15").value(), 
-        "computing", 
-        "C++20 released");
-    Event ev2(
-        getDateFromString("2023-01-10").value(), 
-        "computing", 
-        "Rust 1.66.1 released");
-    Event ev3(
-        getDateFromString("2022-09-20").value(), 
-        "computing", 
-        "Java SE 19 released");
-    Event ev4(
-        getDateFromString("2014-11-12").value(),
-        "computing",
-        ".NET Core released");
-
-    display(ev1); newline();  // echoes of Scheme here...
-    display(ev2); newline();
-    display(ev3); newline();
-    display(ev4); newline();
-
-    // Look! All references to std::cout are gone from main()!
     // Note that you can't print an `std::chrono::year_month_day`
-    // with `display` because there is no overloaded << operator
-    // for it (yet). If you don't agree to use the ISO 8601 format, 
-    // then the current locale would need to be consulted... it gets tricky.
-
-    newline();
-    display("Preparing to read events from CSV file");
-    newline();
-
+    // with `display()` because there is no overloaded << operator
+    // for it (yet).
+ 
     // Construct a path for the events file.
     // If the user's home directory can't be determined, give up.
     string homeDirectoryString;
@@ -208,19 +178,11 @@ int main() {
     // Now we should have a valid path to the `~/.days` directory.
     // Construct a pathname for the `events.csv` file.
     auto eventsPath = daysPath / "events.csv";
-    
-    display("Path to our events file = ");
-    display(eventsPath.string());
-    newline();
 
-    // TODO: Read in the CSV file from `eventsPath` using RapidCSV
+    //    
+    // Read in the CSV file from `eventsPath` using RapidCSV
     // See https://github.com/d99kris/rapidcsv
-
-    if (fs::exists(eventsPath)) {
-        display("NOTE: file already exists");
-        newline();
-    }
-
+    //
     rapidcsv::Document document{eventsPath.string()};
     vector<string> dateStrings{document.GetColumn<string>("date")};
     vector<string> categoryStrings{document.GetColumn<string>("category")};
@@ -241,11 +203,6 @@ int main() {
         };
         events.push_back(event);
     }
-
-    display("Loaded ");
-    display(events.size());
-    display(" events from file");
-    newline();
 
     const auto today = chrono::sys_days{
         floor<chrono::days>(chrono::system_clock::now())};
