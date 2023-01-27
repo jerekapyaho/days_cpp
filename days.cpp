@@ -41,10 +41,17 @@ std::optional<std::chrono::year_month_day> getDateFromString(const std::string& 
         month = stoi(parts.at(1));
         day = stoi(parts.at(2));
 
-        return chrono::year_month_day{
+        auto result = chrono::year_month_day{
             chrono::year{year},
             chrono::month(month),
             chrono::day(day)};
+
+        if (result.ok()) {
+            return result;
+        }
+        else {
+            return nullopt;
+        }
     }
     catch (invalid_argument const& ex) {
         cerr << "conversion error: " << ex.what() << endl;
