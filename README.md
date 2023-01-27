@@ -9,7 +9,7 @@ CSV file called `events.csv` in a subdirectory called `.days` inside the
 user's home directory.
 
 Days can also congratulate the user on their birthday if the current date 
-is the same as their birthdate, set as an enviroment variable called 
+is the same as their birthdate. It should be set as an environment variable called 
 `BIRTHDATE`, with the value in YYYY-MM-DD format, for example, `1988-08-16`.
 
 ## The event file
@@ -104,3 +104,9 @@ not a system variable.
 Note that changes to environment variables will not be picked up by a 
 running shell. After you have defined the environment variable, close the 
 shell window, then open it again.
+
+## Acknowledgments
+
+RapidCSV
+* Copyright (c) 2017, Kristofer Berggren
+* Licensed under the BSD 3-Clause License. See [LICENSE](https://github.com/d99kris/rapidcsv/blob/master/LICENSE]).
