@@ -1,4 +1,4 @@
-#include <iostream> // for standard I/O streams 
+#include <iostream> // for standard I/O streams
 #include <iomanip>  // for stream control
 #include <string>   // for std::string class
 #include <cstdlib>  // for std::getenv
@@ -15,6 +15,14 @@
 
 // Parses the string `buf` for a date in YYYY-MM-DD format. If `buf` can be parsed,
 // returns a wrapped `std::chrono::year_month_day` instances, otherwise `std::nullopt`.
+// NOTE: Once clang++ and g++ implement chrono::from_stream, this could be replaced by
+// something like this:
+//  chrono::year_month_day birthdate;
+//  std::istringstream bds{birthdateValue};
+//  std::basic_istream<char> stream{bds.rdbuf()};
+//  chrono::from_stream(stream, "%F", birthdate);
+// However, I don't know how errors should be handled. Maybe this function could then
+// continue to serve as a wrapper.
 std::optional<std::chrono::year_month_day> getDateFromString(const std::string& buf) {
     using namespace std;  // use std facilities without prefix inside this function
 
@@ -77,11 +85,11 @@ std::optional<std::string> getEnvironmentVariable(const std::string& name) {
 
 // Returns `date` as a string in `YYYY-MM-DD` format.
 // The ostream support for `std::chrono::year_month_day` is not
-// available in most (any?) compilers, so we roll our own.  
+// available in most (any?) compilers, so we roll our own.
 std::string getStringFromDate(const std::chrono::year_month_day& date) {
     std::ostringstream result;
 
-    result 
+    result
         << std::setfill('0') << std::setw(4) << static_cast<int>(date.year())
         << "-" << std::setfill('0') << std::setw(2) << static_cast<unsigned>(date.month())
         << "-" << std::setfill('0') << std::setw(2) << static_cast<unsigned>(date.day());
@@ -105,11 +113,16 @@ inline void newline() {
 // Overload the << operator for the Event class.
 // See https://learn.microsoft.com/en-us/cpp/standard-library/overloading-the-output-operator-for-your-own-classes?view=msvc-170
 std::ostream& operator <<(std::ostream& os, const Event& event) {
-    os 
-        << getStringFromDate(event.getTimestamp()) << ": " 
-        << event.getDescription() 
+    os
+        << getStringFromDate(event.getTimestamp()) << ": "
+        << event.getDescription()
         << " (" + event.getCategory() + ")";
     return os;
+}
+
+// Gets the number of days betweem to time points.
+int getNumberOfDaysBetween(std::chrono::sys_days const& earlier, std::chrono::sys_days const& later) {
+    return (later - earlier).count();
 }
 
 int main() {
@@ -124,26 +137,37 @@ int main() {
     auto birthdateValue = getEnvironmentVariable("BIRTHDATE");
     if (birthdateValue.has_value()) {
         auto birthdate = getDateFromString(birthdateValue.value());
+        ostringstream message;
         if (birthdate.has_value()) {
             auto b = birthdate.value();
             if (b.month() == currentDate.month() && b.day() == currentDate.day()) {
-                ostringstream message;
                 message << "Happy birthday";
                 auto userEnv = getEnvironmentVariable("USER");
                 if (userEnv.has_value()) {
                     auto user = userEnv.value();
                     message << ", " << user;
                 }
-                message << "!";
-                display(message.str()); newline();
+                message << "! ";
             }
+
+            int age = getNumberOfDaysBetween(
+                chrono::floor<chrono::days>(chrono::sys_days{b}),
+                chrono::floor<chrono::days>(chrono::sys_days{currentDate})
+            );
+
+            message << "You are " << age << " days old.";
+            if (age % 1000 == 0) {
+                message << " That's a nice round number!";
+            }
+
+            display(message.str()); newline();
         }
     }
 
     // Note that you can't print an `std::chrono::year_month_day`
     // with `display()` because there is no overloaded << operator
     // for it (yet).
- 
+
     // Construct a path for the events file.
     // If the user's home directory can't be determined, give up.
     string homeDirectoryString;
@@ -176,17 +200,12 @@ int main() {
         //std::filesystem::create_directory(daysPath);
         // See issue: https://github.com/jerekapyaho/days_cpp/issues/4
     }
-    else {
-        display(daysPath.string());
-        display(" exists");
-        newline();
-    }
 
     // Now we should have a valid path to the `~/.days` directory.
     // Construct a pathname for the `events.csv` file.
     auto eventsPath = daysPath / "events.csv";
 
-    //    
+    //
     // Read in the CSV file from `eventsPath` using RapidCSV
     // See https://github.com/d99kris/rapidcsv
     //
