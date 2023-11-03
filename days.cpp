@@ -14,7 +14,7 @@
 #include "rapidcsv.h"  // for the header-only library RapidCSV
 
 // Parses the string `buf` for a date in YYYY-MM-DD format. If `buf` can be parsed,
-// returns a wrapped `std::chrono::year_month_day` instances, otherwise `std::nullopt`.
+// returns a wrapped `std::chrono::year_month_day` instance, otherwise `std::nullopt`.
 // NOTE: Once clang++ and g++ implement chrono::from_stream, this could be replaced by
 // something like this:
 //  chrono::year_month_day birthdate;
@@ -71,7 +71,7 @@ std::optional<std::chrono::year_month_day> getDateFromString(const std::string& 
     return nullopt;
 }
 
-// Returns the value of the environment variable `name` as an `std::optional``
+// Returns the value of the environment variable `name` as an `std::optional`
 // value. If the variable exists, the value is a wrapped `std::string`,
 // otherwise `std::nullopt`.
 std::optional<std::string> getEnvironmentVariable(const std::string& name) {
@@ -120,7 +120,7 @@ std::ostream& operator <<(std::ostream& os, const Event& event) {
     return os;
 }
 
-// Gets the number of days betweem to time points.
+// Gets the number of days between two points in time.
 int getNumberOfDaysBetween(std::chrono::sys_days const& earlier, std::chrono::sys_days const& later) {
     return (later - earlier).count();
 }
